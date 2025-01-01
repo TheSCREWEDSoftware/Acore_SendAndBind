@@ -48,10 +48,10 @@ end
 local function SendAndBind(event, player, command, chatHandler)
     local itemGUID
     local item_id
-    local item_id_name
+    local item_name
     local item_amount
     local targetGUID
-    local targetGUID_name
+    local target_name
     local SAB_eventId
     local mailText
 
@@ -79,17 +79,17 @@ local function SendAndBind(event, player, command, chatHandler)
         end
 
         targetGUID = commandArray[2]
-        targetGUID_name = GetPlayerByGUID(targetGUID)
-        if targetGUID_name == nil then
+        target_name = GetPlayerByGUID(targetGUID)
+        if target_name == nil then
             -- Player is offline
-            targetGUID_name = targetGUID .. " (player is offline)"
+            target_name = targetGUID .. " (player is offline)"
         else
             -- Player is online
-            targetGUID_name = targetGUID .. " (" .. targetGUID_name:GetName() .. ")"
+            target_name = targetGUID .. " (" .. target_name:GetName() .. ")"
         end
 
         item_id = commandArray[3]
-        item_id_name =  item_id .. " (" .. GetItemTemplate(item_id):GetName() .. ")"
+        item_name =  item_id .. " (" .. GetItemTemplate(item_id):GetName() .. ")"
 
         if commandArray[4] == nil then
             item_amount = 1
@@ -114,8 +114,8 @@ local function SendAndBind(event, player, command, chatHandler)
 
         log("", chatHandler, false)
         log("[====" ..  os.date("%m-%d-%Y %I:%M %p") .. "====]", chatHandler, false)
-        log("targetGUID = " .. targetGUID_name, chatHandler)
-        log("item_id = " .. item_id_name, chatHandler)
+        log("targetGUID = " .. target_name, chatHandler)
+        log("item_id = " .. item_name, chatHandler)
         log("item_amount = " .. item_amount, chatHandler)
         if player == nil then
             log("executed by: console", chatHandler)
