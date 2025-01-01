@@ -48,8 +48,10 @@ end
 local function SendAndBind(event, player, command, chatHandler)
     local itemGUID
     local item_id
+    local item_id_name
     local item_amount
     local targetGUID
+    local targetGUID_name
     local SAB_eventId
     local mailText
 
@@ -77,7 +79,17 @@ local function SendAndBind(event, player, command, chatHandler)
         end
 
         targetGUID = commandArray[2]
+        targetGUID_name = GetPlayerByGUID(targetGUID)
+        if targetGUID_name == nil then
+            -- Player is offline
+            targetGUID_name = targetGUID .. " (player is offline)"
+        else
+            -- Player is online
+            targetGUID_name = targetGUID .. " (" .. targetGUID_name:GetName() .. ")"
+        end
+
         item_id = commandArray[3]
+        item_id_name =  item_id .. " (" .. GetItemTemplate(item_id):GetName() .. ")"
 
         if commandArray[4] == nil then
             item_amount = 1
@@ -102,8 +114,8 @@ local function SendAndBind(event, player, command, chatHandler)
 
         log("", chatHandler, false)
         log("[====" ..  os.date("%m-%d-%Y %I:%M %p") .. "====]", chatHandler, false)
-        log("targetGUID = " .. tonumber(targetGUID), chatHandler)
-        log("item_id = " .. tonumber(item_id), chatHandler)
+        log("targetGUID = " .. targetGUID_name, chatHandler)
+        log("item_id = " .. item_id_name, chatHandler)
         log("item_amount = " .. item_amount, chatHandler)
         if player == nil then
             log("executed by: console", chatHandler)
@@ -126,8 +138,6 @@ local function SendAndBind(event, player, command, chatHandler)
         local recipient = GetPlayerByGUID(targetGUID)
         if recipient == nil then
             -- Player is offline
-            log("Player with GUID " .. targetGUID .. " is offline.", chatHandler)
-
             local sql = 'UPDATE `item_instance` SET `flags` = `flags` | 1 WHERE `guid` = '..tonumber(itemGUID)..';'
             log(sql, chatHandler)
             CharDBExecute(sql)
@@ -139,7 +149,6 @@ local function SendAndBind(event, player, command, chatHandler)
             log("Executed UPDATE queries.", chatHandler)
         else
             -- Player is online
-            log("Player " .. recipient:GetName() .. " is online.", chatHandler)
             local item = recipient:GetMailItem(itemGUID)
             if item == nil then
                 onError("Player:GetMailItem returned nil item reference.")
